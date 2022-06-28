@@ -1,3 +1,5 @@
+#!/bin/bash
+
 function_dynamic_arguments () {
     result=0
     args=$#
