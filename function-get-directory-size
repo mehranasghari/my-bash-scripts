@@ -1,6 +1,7 @@
 #!/bin/bash
 
 function_get_directory_size() {
-    size=$(du -s -h $1 2> /dev/null | cut -d "/" -f 1)
-    echo $size
+    size=$(du -s -h -m $1 2> /dev/null | cut -d "/" -f 1)
+    size=$(echo $size | tr -d '*')
+    echo "$size megabytes"
 }
