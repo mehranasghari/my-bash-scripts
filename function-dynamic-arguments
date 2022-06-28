@@ -1,0 +1,8 @@
+function_dynamic_arguments () {
+    result=0
+    args=$#
+    for i in $@; do
+        result=$(($i + $result))
+    done
+    return $result
+}
