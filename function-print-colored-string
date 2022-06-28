@@ -1,0 +1,43 @@
+#!/bin/bash
+
+function_print_colored_string () {
+
+    black='\033[0;30m'        # Black
+    red='\033[0;31m'          # Red
+    green='\033[0;32m'        # Green
+    yellow='\033[0;33m'       # Yellow
+    blue='\033[0;34m'         # Blue
+    purple='\033[0;35m'       # Purple
+    cyan='\033[0;36m'         # Cyan
+    white='\033[0;37m'        # White
+    nocolor='\033[0m'         # No color
+
+    case $2 in
+        "black")
+            echo -e "${black}$1${nocolor}"
+            ;;
+        "red")
+            echo -e "${red}$1${nocolor}"
+            ;;
+        "green")
+            echo -e "${green}$1${nocolor}"
+            ;;
+        "yellow")
+            echo -e "${yellow}$1${nocolor}"
+            ;;
+        "blue")
+            echo -e "${blue}$1${nocolor}"
+            ;;
+        "purple")
+            echo -e "${purple}$1${nocolor}"
+            ;;
+        "cyan")
+            echo -e "${cyan}$1${nocolor}"
+            ;;
+        "white")
+            echo -e "${white}$1${nocolor}"
+            ;;
+        *)
+            echo "ERROR: Unsupported color"
+    esac
+}
