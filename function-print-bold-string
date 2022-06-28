@@ -1,0 +1,3 @@
+function_print_bold_string () {
+    tput bold; echo $1; tput sgr0
+}
