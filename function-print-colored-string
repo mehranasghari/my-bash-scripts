@@ -2,6 +2,11 @@
 
 function_print_colored_string () {
 
+    if [[ $# -ne 2 ]]; then
+        echo "ERROR: you should pass 2 arguments; your string and color."
+        exit 1
+    fi
+
     black='\033[0;30m'        # Black
     red='\033[0;31m'          # Red
     green='\033[0;32m'        # Green
