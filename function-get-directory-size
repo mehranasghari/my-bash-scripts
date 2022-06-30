@@ -2,7 +2,7 @@
 
 function_get_directory_size() {
     if [[ $# -ne 1 ]]; then
-        echo "ERROR: more than 1 arguments."
+        echo "ERROR: you should exactly pass 1 argument."
         exit 1
     fi
     if [[ ! -d $1 ]]; then
