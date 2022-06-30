@@ -1,6 +1,14 @@
 #!/bin/bash
 
 function_get_directory_size() {
+    if [[ $# -ne 1 ]]; then
+        echo "ERROR: more than 1 arguments."
+        exit 1
+    fi
+    if [[ ! -d $1 ]]; then
+        echo "ERROR: $1 is not a directory"
+        exit 1
+    fi
     size=$(du -s -h -m $1 2> /dev/null | cut -d "/" -f 1)
     size=$(echo $size | tr -d '*')
     echo "$size megabytes"
