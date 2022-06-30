@@ -1,5 +1,9 @@
 #!/bin/bash
 
 function_print_bold_string () {
+    if [[ $# -ne 1 ]]; then
+        echo "ERROR: you should pass exactly 1 argument."
+        exit 1
+    fi
     tput bold; echo $1; tput sgr0
 }
