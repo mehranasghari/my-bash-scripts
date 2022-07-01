@@ -98,9 +98,10 @@ case $ACTION in                 # the main action will be done in this block
         if cmp -s "./temp.db" "./$DATABASE" ; then
             echo "Nothing has been changed."
         else
-            echo "There is some changes:"
-            echo "old database\t\t\t\tnew database"
+            echo -e "There is some changes:\n"
+            echo -e "\t\t\told database\t\t\t\t\t\t\tnew database"
             diff --suppress-common-lines -y ./temp.db ./$DATABASE
+            echo -e ""
         fi
         rm temp.db
         ;;
