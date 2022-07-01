@@ -4,7 +4,7 @@ ACTION=none
 DATABASE=default.db
 
 
-usage() {
+usage() {                       # error of usage
     cat <<EOL
 Usage: filechecker <init|scan> [OPTIONS] <source_dir>
 Options:
@@ -57,7 +57,8 @@ case $ACTION in                 # the main action will be done in this block
         fi
         # creating history from source directory
         FILES=($(tree -iRfan --noreport $1 | grep -Ev "\->|error openning dir"))
-        if [[ ! -e $DATABASE ]]; then
+        # checking if database file is existing or not
+        if [[ ! -e $DATABASE ]]; then   
             for FILE in ${FILES[@]}; do
                 CHECKSUM=($(md5sum $FILE 2> /dev/null))
                 if [[ $? -eq 0 ]]; then
