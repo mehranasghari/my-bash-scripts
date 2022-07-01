@@ -1,4 +1,7 @@
 #!/bin/bash
+
+# this is a simple bash script that checks if the files in some directory changed or not
+# you can create database from a directory and scan it for changes
  
 ACTION=none
 DATABASE=default.db
@@ -133,7 +136,7 @@ case $ACTION in
         rm temp.db
         ;;
 
-        
+
     *)
         echo "ERROR: Undefined Action."
         exit 1
