@@ -12,10 +12,12 @@ Options:
 EOL
 }
 
+
 if [[ $# -lt 2 ]]; then         # checking number of arguments
     usage
     exit 1
 fi
+
 
 case $1 in                      # checking what action should be done
     "init")
@@ -32,6 +34,7 @@ case $1 in                      # checking what action should be done
         ;;
 esac
 
+
 while true; do                  # checking if the database is given or not
     case $1 in                  # database is for writing when action is init
         "--dbname")             # database is for comparing when action is scan
@@ -44,6 +47,7 @@ while true; do                  # checking if the database is given or not
     esac
 done
 
+
 case $ACTION in
     "init")                     # the main action will be done in this block if action is init
         if [[ $# -ne 1 ]]; then # checking number of arguments
@@ -51,13 +55,16 @@ case $ACTION in
             exit 1
         fi
 
+
         if [[ ! -d $1 ]]; then  # checking if the source directory is a directory or not
             echo "ERROR: $1 should be a directory."
             exit 1
         fi
 
+
         # creating list of files in the source directory
         FILES=($(tree -iRfan --noreport $1 | grep -Ev "\->|error openning dir"))
+
 
         # checking if database file is existing or not
         if [[ ! -e $DATABASE ]]; then  
@@ -69,6 +76,7 @@ case $ACTION in
                     echo "${CHECKSUM[0]} ${CHECKSUM[1]}" >> $DATABASE
                 fi
             done
+
         else
             # removing database if its exists
             rm $DATABASE
@@ -79,19 +87,24 @@ case $ACTION in
                 if [[ $? -eq 0 ]]; then
                     echo "${CHECKSUM[0]} ${CHECKSUM[1]}" >> $DATABASE
                 fi
-            done        
-        fi  
+            done     
+        fi
         ;;
+
+
     "scan")                     # the main action will be done in this block if action is scan
         if [[ $# -ne 1 ]]; then # checking number of arguments
             usage
             exit 1
         fi
 
+
         if [[ ! -d $1 ]]; then  # checking if the source directory is a directory or not
             echo "ERROR: $1 should be a directory."
             exit 1
         fi
+
+
         # creating list of files in the source directory
         FILES=($(tree -iRfan --noreport $1 | grep -Ev "\->|error openning dir"))
 
@@ -106,6 +119,7 @@ case $ACTION in
             fi        
         done
 
+
         # comparing for difference of source database and old database
         if cmp -s "./temp.db" "./$DATABASE" ; then
             echo "Nothing has been changed."
@@ -118,6 +132,8 @@ case $ACTION in
         # remove temporary database
         rm temp.db
         ;;
+
+        
     *)
         echo "ERROR: Undefined Action."
         exit 1
