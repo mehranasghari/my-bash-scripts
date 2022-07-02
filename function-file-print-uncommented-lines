@@ -1,33 +1,33 @@
 #!/bin/bash
 
 function_file_print_unccommented_lines() {
-    Usage() { # usage error
-        cat <<EOL
+	Usage() { # usage error
+		cat <<EOL
 Usage: $0 <file>
 EOL
-    }
+	}
 
-    if [[ $# -ne 1 ]]; then # check number of arguments
-        Usage
-        exit 1
-    fi
+	if [[ $# -ne 1 ]]; then # check number of arguments
+		Usage
+		exit 1
+	fi
 
-    if [[ ! -e $1 ]]; then # check if the argument does exist or not
-        echo "ERROR: $1 does not exitst"
-        Usage
-        exit 1
-    fi
+	if [[ ! -e $1 ]]; then # check if the argument does exist or not
+		echo "ERROR: $1 does not exitst"
+		Usage
+		exit 1
+	fi
 
-    if [[ ! -f $1 ]]; then # check if the argument is a file or not
-        echo "ERROR: $1 should be a file."
-        Usage
-        exit 1
-    fi
-    
-    while true; do # print all uncommented lines
-        grep -v '^*#' $1
-        if [[ $? -eq 0 ]]; then
-            exit 0
-        fi
-    done
+	if [[ ! -f $1 ]]; then # check if the argument is a file or not
+		echo "ERROR: $1 should be a file."
+		Usage
+		exit 1
+	fi
+
+	while true; do # print all uncommented lines
+		grep -v '^*#' $1
+		if [[ $? -eq 0 ]]; then
+			exit 0
+		fi
+	done
 }
