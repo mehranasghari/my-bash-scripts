@@ -2,143 +2,132 @@
 
 # this is a simple bash script that checks if the files in some directory changed or not
 # you can create database from a directory and scan it for changes
- 
+
 ACTION=none
 DATABASE=default.db
 
-
-usage() {                       # error of usage
-    cat <<EOL
+usage() { # error of usage
+	cat <<EOL
 Usage: filechecker <init|scan> [OPTIONS] <source_dir>
 Options:
     --dbname <database>: Database file.
 EOL
 }
 
-
-if [[ $# -lt 2 ]]; then         # checking number of arguments
-    usage
-    exit 1
+if [[ $# -lt 2 ]]; then # checking number of arguments
+	usage
+	exit 1
 fi
 
-
-case $1 in                      # checking what action should be done
-    "init")
-        ACTION=init
-        shift 1
-        ;;
-    "scan")
-        ACTION=scan
-        shift 1
-        ;;
-    *)
-        echo "ERROR: Undefined ACTION."
-        exit 1
-        ;;
+case $1 in # checking what action should be done
+"init")
+	ACTION=init
+	shift 1
+	;;
+"scan")
+	ACTION=scan
+	shift 1
+	;;
+*)
+	echo "ERROR: Undefined ACTION."
+	exit 1
+	;;
 esac
 
-
-while true; do                  # checking if the database is given or not
-    case $1 in                  # database is for writing when action is init
-        "--dbname")             # database is for comparing when action is scan
-            DATABASE=$2
-            shift 2
-            ;;
-        *)
-            break
-            ;;
-    esac
+while true; do # checking if the database is given or not
+	case $1 in    # database is for writing when action is init
+	"--dbname")   # database is for comparing when action is scan
+		DATABASE=$2
+		shift 2
+		;;
+	*)
+		break
+		;;
+	esac
 done
 
-
 case $ACTION in
-    "init")                     # the main action will be done in this block if action is init
-        if [[ $# -ne 1 ]]; then # checking number of arguments
-            usage
-            exit 1
-        fi
+"init")                  # the main action will be done in this block if action is init
+	if [[ $# -ne 1 ]]; then # checking number of arguments
+		usage
+		exit 1
+	fi
 
+	if [[ ! -d $1 ]]; then # checking if the source directory is a directory or not
+		echo "ERROR: $1 should be a directory."
+		exit 1
+	fi
 
-        if [[ ! -d $1 ]]; then  # checking if the source directory is a directory or not
-            echo "ERROR: $1 should be a directory."
-            exit 1
-        fi
+	# creating list of files in the source directory
+	FILES=($(tree -iRfan --noreport $1 | grep -Ev "\->|error openning dir"))
 
+	# checking if database file is existing or not
+	if [[ ! -e $DATABASE ]]; then
+		# computing MD5 from every file
+		for FILE in ${FILES[@]}; do
+			CHECKSUM=($(md5sum $FILE 2>/dev/null))
+			# writing MD5 of and source of each file
+			if [[ $? -eq 0 ]]; then
+				echo "${CHECKSUM[0]} ${CHECKSUM[1]}" >>$DATABASE
+			fi
+		done
 
-        # creating list of files in the source directory
-        FILES=($(tree -iRfan --noreport $1 | grep -Ev "\->|error openning dir"))
+	else
+		# removing database if its exists
+		rm $DATABASE
+		# computing MD5 from every file
+		for FILE in ${FILES[@]}; do
+			CHECKSUM=($(md5sum $FILE 2>/dev/null))
+			# writing MD5 of each file
+			if [[ $? -eq 0 ]]; then
+				echo "${CHECKSUM[0]} ${CHECKSUM[1]}" >>$DATABASE
+			fi
+		done
+	fi
+	;;
 
+\
+	"scan")                 # the main action will be done in this block if action is scan
+	if [[ $# -ne 1 ]]; then # checking number of arguments
+		usage
+		exit 1
+	fi
 
-        # checking if database file is existing or not
-        if [[ ! -e $DATABASE ]]; then  
-            # computing MD5 from every file
-            for FILE in ${FILES[@]}; do
-                CHECKSUM=($(md5sum $FILE 2> /dev/null))
-                # writing MD5 of and source of each file
-                if [[ $? -eq 0 ]]; then
-                    echo "${CHECKSUM[0]} ${CHECKSUM[1]}" >> $DATABASE
-                fi
-            done
+	if [[ ! -d $1 ]]; then # checking if the source directory is a directory or not
+		echo "ERROR: $1 should be a directory."
+		exit 1
+	fi
 
-        else
-            # removing database if its exists
-            rm $DATABASE
-            # computing MD5 from every file
-            for FILE in ${FILES[@]}; do
-                CHECKSUM=($(md5sum $FILE 2> /dev/null))
-                # writing MD5 of and source of each file
-                if [[ $? -eq 0 ]]; then
-                    echo "${CHECKSUM[0]} ${CHECKSUM[1]}" >> $DATABASE
-                fi
-            done     
-        fi
-        ;;
+	# creating list of files in the source directory
+	FILES=($(tree -iRfan --noreport $1 | grep -Ev "\->|error openning dir"))
 
+	touch temp.db # creating temporary database file
 
-    "scan")                     # the main action will be done in this block if action is scan
-        if [[ $# -ne 1 ]]; then # checking number of arguments
-            usage
-            exit 1
-        fi
+	# computing MD5 from every file
+	for FILE in ${FILES[@]}; do
+		CHECKSUM=($(md5sum $FILE 2>/dev/null))
+		# writing MD5 of each file
+		if [[ $? -eq 0 ]]; then
+			echo "${CHECKSUM[0]} ${CHECKSUM[1]}" >>temp.db
+		fi
+	done
 
+	# comparing for difference of source database and old database
+	if cmp -s "./temp.db" "./$DATABASE"; then
+		echo "Nothing has been changed."
+	else
+		echo -e "There is some changes:\n"
+		echo -e "\t\t\told database\t\t\t\t\t\t\tnew database"
+		diff --suppress-common-lines -y ./temp.db ./$DATABASE
+		echo -e ""
+	fi
+	# remove temporary database
+	rm temp.db
+	;;
 
-        if [[ ! -d $1 ]]; then  # checking if the source directory is a directory or not
-            echo "ERROR: $1 should be a directory."
-            exit 1
-        fi
-
-
-        # creating list of files in the source directory
-        FILES=($(tree -iRfan --noreport $1 | grep -Ev "\->|error openning dir"))
-
-        touch temp.db           # creating temporary database file
-
-        # computing MD5 from every file
-        for FILE in ${FILES[@]}; do
-            CHECKSUM=($(md5sum $FILE 2> /dev/null))
-            # writing MD5 of and source of each file
-            if [[ $? -eq 0 ]]; then
-                echo "${CHECKSUM[0]} ${CHECKSUM[1]}" >> temp.db
-            fi        
-        done
-
-
-        # comparing for difference of source database and old database
-        if cmp -s "./temp.db" "./$DATABASE" ; then
-            echo "Nothing has been changed."
-        else
-            echo -e "There is some changes:\n"
-            echo -e "\t\t\told database\t\t\t\t\t\t\tnew database"
-            diff --suppress-common-lines -y ./temp.db ./$DATABASE
-            echo -e ""
-        fi
-        # remove temporary database
-        rm temp.db
-        ;;
-
-
-    *)
-        echo "ERROR: Undefined Action."
-        exit 1
-        ;;
+\
+	*)
+	echo "ERROR: Undefined Action."
+	exit 1
+	;;
 esac
