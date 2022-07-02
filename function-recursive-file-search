@@ -1,0 +1,34 @@
+#!/bin/bash
+
+function_recursive_file_search() {
+    Usage() {
+        cat <<EOL
+
+Usage: $0 <file name> <search path>
+
+EOL
+}
+    if [[ $# -ne 2 ]]; then
+        Usage
+        exit 1
+    fi
+
+    if [[ -d $1 ]]; then
+        echo -e "\n$1 should be a file name."
+        Usage
+        exit 1
+    fi
+
+    if [[ ! -d $2 ]]; then
+        echo -e "\n$2 should be a directory."
+        Usage
+        exit 1
+    fi
+
+    while true; do
+        find $2 -type d -not -name $1 2> /dev/null
+        if [[ $? -eq 0 ]]; then
+            exit 0
+        fi
+    done
+}
