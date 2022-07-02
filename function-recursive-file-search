@@ -1,31 +1,31 @@
 #!/bin/bash
 
 function_recursive_file_search() {
-    Usage() {
+    Usage() { # usage error
         cat <<EOL
 
 Usage: $0 <file name> <search path>
 
 EOL
 }
-    if [[ $# -ne 2 ]]; then
+    if [[ $# -ne 2 ]]; then # check number of arguments
         Usage
         exit 1
     fi
 
-    if [[ -d $1 ]]; then
+    if [[ -d $1 ]]; then # check that file name not to be a directory
         echo -e "\n$1 should be a file name."
         Usage
         exit 1
     fi
 
-    if [[ ! -d $2 ]]; then
+    if [[ ! -d $2 ]]; then # check that search path to be a directory
         echo -e "\n$2 should be a directory."
         Usage
         exit 1
     fi
 
-    while true; do
+    while true; do # sarch for filename in given path
         find $2 -type d -not -name $1 2> /dev/null
         if [[ $? -eq 0 ]]; then
             exit 0
