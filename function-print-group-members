@@ -15,7 +15,7 @@ EOL
 		exit 1
 	fi
 
-    # check if the group name exists or not
+	# check if the group name exists or not
 	cat /etc/group | cut -d : -f 1 | grep $1 &>/dev/null
 	if [[ $? -ne 0 ]]; then
 		echo "ERROR: there is no such $1 group"
@@ -23,7 +23,7 @@ EOL
 		exit 1
 	fi
 
-    # prints the member of given group
+	# prints the member of given group
 	while true; do
 		getent group $1 | awk -F ':' '{print $4}'
 		if [[ $? -eq 0 ]]; then
