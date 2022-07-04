@@ -1,0 +1,5 @@
+#!/bin/bash
+
+function_print_resourcey_processes() {
+	ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem | head -11
+}
