@@ -1,0 +1,15 @@
+#!/bin/bash
+
+function_system_load_alert() {
+	# calculating current load
+	load=$(uptime | cut -d ',' -f 3 | cut -d ':' -f 2)
+
+	# calculating %80 of load
+	treshold=$(echo "0.8 * $(nproc)" | bc -l)
+
+	# comparing the current load and warning treshold
+	if [[ $load < $treshold ]]; then
+		echo -e "\nWARNING: The current system load is more than %80.\n"
+	fi
+
+}
