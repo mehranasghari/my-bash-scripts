@@ -1,0 +1,35 @@
+#!/bin/bash
+
+function_print_group_members() {
+	Usage() { # usage error
+		cat <<EOL
+
+Usage: $0 <group name>
+
+EOL
+	}
+
+	if [[ $# -ne 1 ]]; then # check number of arguments
+		echo "ERROR: you should give just 1 group name."
+		Usage
+		exit 1
+	fi
+
+    # check if the group name exists or not
+	cat /etc/group | cut -d : -f 1 | grep $1 &>/dev/null
+	if [[ $? -ne 0 ]]; then
+		echo "ERROR: there is no such $1 group"
+		Usage
+		exit 1
+	fi
+
+    # prints the member of given group
+	while true; do
+		getent group $1 | awk -F ':' '{print $4}'
+		if [[ $? -eq 0 ]]; then
+			exit 0
+		else
+			exit 1
+		fi
+	done
+}
