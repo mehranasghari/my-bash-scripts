@@ -1,0 +1,9 @@
+#!/bin/bash
+
+function_print_system_info() {
+	echo -e "SYSTEM INFO:\n"
+	inxi -F
+	echo -e "\nUSER INFO:\n"
+	id
+	exit 0
+}
