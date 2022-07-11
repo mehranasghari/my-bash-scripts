@@ -3,24 +3,23 @@
 VERBOSE_OUTPUT=0
 ADD_DATE_TO_FILENAME=""
 
-usage() {
+usage() { # usage error
 	cat <<EOL
 USAGE: $0 [OPTIONS] <source_dir> <backup_name>
 OPTIONS:
     -v              : Verbose
     --date <format> : Add date to the backup filename.
                         Supported formats: time, date, datetime, timestamp
-
 EOL
 }
 
-if [[ $# -lt 2 ]]; then
+if [[ $# -lt 2 ]]; then # chek number of inputs
 	usage
 	exit 1
 fi
 
 while true; do
-	case $1 in
+	case $1 in # check switches
 	-v)
 		VERBOSE_OUTPUT=1
 		shift 1
@@ -52,22 +51,22 @@ while true; do
 	esac
 done
 
-if [[ $# -ne 2 ]]; then
+if [[ $# -ne 2 ]]; then # chekc number of inputs
 	usage
 	exit 1
 fi
 
-if [[ ! -d "$1" ]]; then
+if [[ ! -d "$1" ]]; then # check if the backup source is directory or not
 	echo "ERROR: $1 should be a directory."
 	exit 1
 fi
 
-if [[ "$2" != *.tar.gz ]]; then
+if [[ "$2" != *.tar.gz ]]; then # check the backup name
 	echo "ERROR: $2 should be something with .tar.gz extension."
 	exit 1
 fi
 
-if [[ $VERBOSE_OUTPUT -eq 0 ]]; then
+if [[ $VERBOSE_OUTPUT -eq 0 ]]; then # starting backup
 	if [[ ADD_DATE_TO_FILENAME == "" ]]; then
 		tar -zcf $2 $1 &>/dev/null
 	else
