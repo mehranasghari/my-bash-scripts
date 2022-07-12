@@ -3,6 +3,11 @@
 num1=$1
 num2=$2
 
+Usage() {
+	cat <<EOL
+	Usage: $0 number1 number2
+EOL
+}
 common_divisor() {
 
 	local num1=$1 # setting variables that passed to function localy
