@@ -26,3 +26,5 @@ common_divisor() {
 common_divisor $1 $2 # calling function with two input arguments
 
 echo "gcd of $num1 and $num2 is: $result" # printing the final result
+
+# end
